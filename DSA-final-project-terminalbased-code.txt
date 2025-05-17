@@ -1,0 +1,192 @@
+import time
+user = {}
+def cyan(text):
+    return f"\033[36m{text}\033[0m"
+def blue(text):
+    return f"\033[34m{text}\033[0m"
+def magenta(text):
+    return f"\033[35m{text}\033[0m"
+def italicize(text):
+    return f"\033[3m{text}\033[0m"
+def green(text):
+    return f"\033[32m\033[1m\033[3m{text}\033[0m"
+def red(text):
+    return f"\033[31m\033[1m\033[3m{text}\033[0m"
+def line(text):
+    return f"\033[4m{text}\033[0m"
+def bold(text):
+    return f"\033[1m{text}\033[0m"
+
+# WELCOME
+print(magenta(bold("Welcome to SmartVault")))
+print(magenta(italicize("""Securely store and access your files anytime and anywhere.
+Create an account to get started, or log in if you already have one""")))
+
+# ADD FILE
+def file(username):
+    print(blue(line("\n   ADD FILE   ")))
+    file_name = input("Enter file name to upload: ")
+    file_content = input("Enter file content to upload: ")
+    if file_name in user[username]:
+        print(red("File already exist"))
+        time.sleep(0.5)
+        fae = input("\nReplace file? [y/n]: ")
+        if fae.lower() == "y":
+            del user[username][file_name]
+            user[username][file_name] = file_content
+            print(green("File has been replaced✓"))
+            time.sleep(0.5)
+        elif fae.lower() == "n":
+            profile(username)
+        else:
+            print(red("Invalid input"))
+            time.sleep(0.5)
+    else:
+        user[username][file_name] = file_content
+        print(green("File has been uploaded✓"))
+        time.sleep(0.5)
+
+# RENAME
+def rename(username):
+    print(blue(line("\n    RENAME    ")))
+    for file_name in user[username]:
+        if file_name != "password456":
+            print(f"{file_name}")
+            time.sleep(.3)
+    choice = input("Choose File: ")
+    if choice not in user[username]:
+        print(red("File not found"))
+        time.sleep(0.5)
+    else:
+        new_name = input("Enter new file name: ")
+        if new_name in user[username]:
+            print(red("A file with this name already exists"))
+            time.sleep(0.5)
+        else:
+            user[username][new_name] = user[username].pop(choice)
+            print(green("File renamed successfully✓"))
+            time.sleep(0.5)
+
+# DELETE
+def delete(username):
+    print(blue(line("\n    DELETE    ")))
+    for file_name in user[username]:
+        if file_name != "password456":
+            print(f"{file_name}")
+            time.sleep(.3)
+    choice = input("Choose File: ")
+    if choice in user[username]:
+        delete = input(f"Are you sure you want to delete {choice}? [y/n]: ")
+        if delete.lower() == "y":
+            user[username].pop(choice)
+            print(green("File deleted successfully✓"))
+            time.sleep(0.5)
+        elif delete.lower() == "n":
+            return
+        else:
+            print(red("Invalid input"))
+    else:
+        print(red("File not found"))
+
+# VIEW FILE
+def view(username):
+    while True:
+        print(blue(line("\n    FILES    ")))
+        if len(user[username]) == 1:
+            print(red("No files found"))
+            time.sleep(0.5)
+            return
+        else:
+            for file_name in user[username]:
+                if file_name != "password456":
+                    print(f"> {file_name:<10} | {user[username][file_name]:<2}")
+                    time.sleep(.3)
+            print(blue(line("\n EDIT FILE ")))
+            print("[1] Rename")
+            print("[2] Delete")
+            print("[3] Back")
+            print(blue("--------------\n"))
+            choice = input("Choose an option: ")
+            if choice == "1":
+                rename(username)
+            elif choice == "2": 
+                delete(username)
+            elif choice == "3":
+                return
+            else:
+                print(red("Invalid input"))
+                time.sleep(0.5)
+
+#PROFILE
+def profile(username):
+    while True:
+        print(blue(line("\n   PROFILE   ")))
+        print("[1] Add file")
+        print("[2] View file")
+        print("[3] Logout")
+        print(blue("--------------\n"))
+        choice = input("Choose an option: ")
+        if choice == "1":
+            file(username)
+        elif choice == "2":
+            view(username)
+        elif choice == "3":
+            break
+        else:
+            print(red("Invalid input"))
+            time.sleep(0.5)
+
+# REGISTER
+def register():
+    print(line(cyan("\nCREATE PROFILE")))
+    username = input("Username: ")
+    if username in user:
+        print(red(f"{username} already exists."))
+        time.sleep(0.5)
+        return
+    user [username] = {}
+    password = input("Password: ")
+    user[username]['password456'] = password
+    print(green("Registered successfully✓"))
+    time.sleep(0.5)
+
+# LOGIN
+def login():
+    print(cyan(line("\nLOGIN ACCOUNT")))
+    username = input("Username: ")
+    if username not in user:
+        print(red("User not found"))
+        time.sleep(0.5)
+        return
+    password = input("Password: ")
+    if user[username]['password456'] != password:
+        print(red("Incorrect password"))
+        time.sleep(0.5)
+        return
+    print(green("Login successfully✓"))
+    time.sleep(0.5)
+    profile(username)
+
+
+# MENU
+def menu():
+    while True:
+        print(cyan(line("\n     MENU     ")))
+        print("[1] Register")
+        print("[2] Login")
+        print("[3] Exit")
+        print(cyan("--------------\n"))
+        choice = input("Choose an option: ")
+        if choice == "1":
+            register()
+        elif choice == "2":
+            login()
+        elif choice == "3":
+            break
+        else:
+            print(red("Invalid input"))
+            time.sleep(0.5)
+
+
+if __name__ == "__main__":
+    menu()
